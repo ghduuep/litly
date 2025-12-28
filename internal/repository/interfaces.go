@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ghduuep/litly/internal/domain"
+	dto "github.com/ghduuep/litly/internal/dto/user"
 )
 
 type UserRepository interface {
@@ -11,7 +12,7 @@ type UserRepository interface {
 	FindByID(ctx context.Context, id int64) (*domain.Book, error)
 	Delete(ctx context.Context, id int64) error
 	FindAll(ctx context.Context) ([]*domain.Book, error)
-	Update(ctx context.Context, b *domain.Book) error
+	Update(ctx context.Context, b *dto.UpdateUserRequest) error
 }
 
 type BookRepository interface {

@@ -19,10 +19,10 @@ func NewPostgresBookRepository(db *sql.DB) *PostgresBookRepository {
 }
 
 func (r *PostgresBookRepository) Create(ctx context.Context, u *domain.Book) (*domain.Book, error) {
-	query := `INSERT INTO books (title, isbn, description, published_at, genre, pages) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, title, isbn, description, published_at, genre, pages, created_at, updated_at`
+	query := `INSERT INTO books (title, isbn, description, published_at, genre, pages) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, title, isbn, description, published_at, genre, pages, created_at = NOW(), updated_at = NOW()`
 
 	newBook := &domain.Book{}
-	err := r.db.QueryRowContext(ctx, query).Scan(
+	err := r.db.QueryRowContext(ctx, query, u.Title, u.ISBN, u.Description, u.PublishedAt, u.Genre, u.Pages).Scan(
 		&newBook.ID,
 		&newBook.Title,
 		&newBook.ISBN,
@@ -68,7 +68,15 @@ func (r *PostgresBookRepository) FindByID(ctx context.Context, id int64) (*domai
 }
 
 func (r *PostgresBookRepository) Update(ctx context.Context, id int64, u *domain.User) (*domain.User, error) {
-	return nil, nil
+	var setParts []string
+	var args []any
+	argsPos := 1
+
+	if u.Username != nil {
+		setParts = append(setParts, fmt.Sprintf("username = $%d", argsPos))
+		args = append(args, u.Username)
+		argsPos++
+	}
 }
 
 func (r *PostgresBookRepository) Delete(ctx context.Context, id int64) error {
